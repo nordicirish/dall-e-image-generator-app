@@ -61,17 +61,18 @@ export default function Contact() {
       alert("An error occurred. Please try again.");
     }
   };
+  ;
 
   return (
     <main className="p-4 min-h-screen bg-gradient-to-r from-purple-500 to-pink-500 text-white flex flex-col items-center justify-start px-8 py-12">
       <h1 className="text-4xl font-bold mb-8">Contact Us</h1>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg text-black"
+        className="w-full max-w-lg bg-gradient-to-br from-purple-600 to-pink-600 p-8 rounded-lg shadow-lg text-white"
       >
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
             htmlFor="name"
           >
             Name
@@ -82,15 +83,15 @@ export default function Contact() {
             type="text"
             value={formData.name}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border border-purple-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white bg-opacity-90"
           />
           {errors.name && (
-            <p className="text-red-500 text-xs italic">{errors.name}</p>
+            <p className="text-red-300 text-xs italic mt-1">{errors.name}</p>
           )}
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
             htmlFor="email"
           >
             Email
@@ -101,15 +102,15 @@ export default function Contact() {
             type="email"
             value={formData.email}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border border-purple-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white bg-opacity-90"
           />
           {errors.email && (
-            <p className="text-red-500 text-xs italic">{errors.email}</p>
+            <p className="text-red-300 text-xs italic mt-1">{errors.email}</p>
           )}
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
             htmlFor="message"
           >
             Message
@@ -119,18 +120,18 @@ export default function Contact() {
             name="message"
             value={formData.message}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border border-purple-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white bg-opacity-90 h-32"
           />
           {errors.message && (
-            <p className="text-red-500 text-xs italic">{errors.message}</p>
+            <p className="text-red-300 text-xs italic mt-1">{errors.message}</p>
           )}
         </div>
         <div className="flex items-center justify-between">
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
           >
-            Send
+            Send Message
           </button>
         </div>
       </form>
