@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { imageGenerationOptions } from "../data";
+import OptionsSelector from "./components/options-selector";
+import { formatSelectedOptions } from "@/utils";
 
 export default function ImageGeneration() {
   const [prompt, setPrompt] = useState("");
@@ -23,18 +25,18 @@ export default function ImageGeneration() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     const fullPrompt = `${prompt} ${Object.entries(selectedOptions)
       .filter(([_, value]) => value)
       .map(([category, value]) => `${value} ${category}`)
-      .join(', ')}`.trim();
+      .join(", ")}`.trim();
 
     try {
-      const response = await fetch('/api/generate-image', {
-        method: 'POST',
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt: fullPrompt, model }),
       });
@@ -42,18 +44,20 @@ export default function ImageGeneration() {
       const result = await response.json();
 
       if (result.success) {
-        setImageUrl(result.imageUrl || '');
+        setImageUrl(result.imageUrl || "");
       } else {
-        setError(result.error || 'Failed to generate image');
+        setError(result.error || "Failed to generate image");
       }
     } catch (err) {
       console.error(err);
-      setError('An unexpected error occurred');
+      setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   }
 
+  
+  
   return (
     <main className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-12 flex flex-col items-center justify-start">
       <h1 className="text-4xl font-bold mb-8 text-center">Image Generation</h1>
@@ -94,25 +98,21 @@ export default function ImageGeneration() {
                 <option value="dall-e-3">DALL-E 3</option>
               </select>
             </div>
-            {Object.entries(imageGenerationOptions).map(
-              ([category, options]) => (
-                <ButtonGroup
-                  key={category}
-                  title={category}
-                  options={options}
-                  selectedOption={selectedOptions[category] || ""}
-                  onOptionClick={(option) =>
-                    handleOptionClick(category, option)
-                  }
-                />
-              )
-            )}
+            <OptionsSelector
+              options={imageGenerationOptions}
+              selectedOptions={selectedOptions}
+              onOptionClick={handleOptionClick}
+            />
             <button
               type="submit"
               disabled={isLoading}
               className="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition duration-300"
             >
-              {isLoading ? "Generating..." : "Generate Image"}
+              {isLoading ? (
+                <span className="opacity-50">Generating...</span>
+              ) : (
+                "Generate Image"
+              )}
             </button>
           </form>
           {error && <p className="text-red-300 mt-4">{error}</p>}
@@ -120,21 +120,44 @@ export default function ImageGeneration() {
 
         {/* Right side - Generated image */}
         <div className="w-full lg:w-1/2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold mb-4 text-white">
-            Generated Image
-          </h2>
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt="Generated"
-              width={500}
-              height={500}
-              layout="responsive"
-            />
+          {isLoading ? (
+            <>
+              <h2 className="text-2xl font-bold mb-4 text-white">
+                Image is generating...
+              </h2>
+              <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-white"></div>
+              </div>
+            </>
+          ) : imageUrl ? (
+            <>
+              <h2 className="text-2xl font-bold mb-4 text-white">
+                Generated Image
+              </h2>
+              <Image
+                src={imageUrl}
+                alt={`Generated image of a ${prompt}. ${formatSelectedOptions(
+                  selectedOptions
+                )}`}
+                width={500}
+                height={500}
+                layout="responsive"
+              />
+              <p className="text-sm text-white mt-2 capitalize">
+                Generated image for prompt: {prompt}
+                <br />
+                {formatSelectedOptions(selectedOptions)}
+              </p>
+            </>
           ) : (
-            <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center text-purple-200">
-              No image generated yet
-            </div>
+            <>
+              <h2 className="text-2xl font-bold mb-4 text-white">
+                Generated Image
+              </h2>
+              <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center text-purple-200">
+                No image generated yet
+              </div>
+            </>
           )}
         </div>
       </div>

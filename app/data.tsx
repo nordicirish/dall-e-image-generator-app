@@ -21,7 +21,7 @@ export const pricingPlans = [
 
 export const imageGenerationOptions = {
   lighting: ["Soft Light", "Hard Light", "Natural Light"],
-  styles: [
+  style: [
     "Cyberpunk",
     "Art Deco",
     "Minimalist",
@@ -29,27 +29,20 @@ export const imageGenerationOptions = {
     "Vaporwave",
     "Surrealist",
   ],
-  colorPalettes: [
-    "Vibrant",
-    "Pastel",
-    "Monochrome",
-    "Earth Tones",
-    "Neon",
-  ],
-  artMediums: [
+  colorPalette: ["Vibrant", "Pastel", "Monochrome", "Earth Tones", "Neon"],
+  artMedium: [
     "Oil Painting",
     "Watercolor",
     "Digital Art",
     "Pencil Sketch",
     "Acrylic",
   ],
-  timePeriods: [
+  timePeriod: [
     "Renaissance",
     "Baroque",
     "Impressionist",
     "Modern",
     "Futuristic",
   ],
-  moods: ["Cheerful", "Mysterious", "Serene", "Dramatic", "Whimsical"],
+  mood: ["Cheerful", "Mysterious", "Serene", "Dramatic", "Whimsical"],
 };
-
