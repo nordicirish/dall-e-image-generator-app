@@ -4,6 +4,8 @@ import Image from "next/image";
 import { imageGenerationOptions } from "../data";
 import OptionsSelector from "./components/options-selector";
 import { formatSelectedOptions } from "@/utils";
+import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 export default function ImageGeneration() {
   const [prompt, setPrompt] = useState("");
@@ -56,8 +58,29 @@ export default function ImageGeneration() {
     }
   }
 
-  
-  
+  const router = useRouter();
+
+  const handleDownload = async () => {
+    if (imageUrl) {
+      try {
+        // First, send the image URL to be stored server-side
+        const encodedUrl = encodeURIComponent(imageUrl);
+        const storeResponse = await fetch(`/api/download-image?url=${encodedUrl}`);
+        const { id } = await storeResponse.json();
+
+        if (id) {
+          // Now download the image using the returned ID
+          const downloadUrl = `/api/download-image?id=${id}`;
+          window.location.href = downloadUrl;
+        } else {
+          console.error('Failed to store image');
+        }
+      } catch (error) {
+        console.error('Error initiating download:', error);
+      }
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-12 flex flex-col items-center justify-start">
       <h1 className="text-4xl font-bold mb-8 text-center">Image Generation</h1>
@@ -144,7 +167,7 @@ export default function ImageGeneration() {
                 layout="responsive"
               />
               <p className="text-sm text-white mt-2 capitalize">
-                Generated image for prompt: {prompt}
+                Generated image: {prompt}
                 <br />
                 {formatSelectedOptions(selectedOptions)}
               </p>
@@ -159,58 +182,19 @@ export default function ImageGeneration() {
               </div>
             </>
           )}
+          {imageUrl && (
+            <div className="mt-4">
+              <button
+                onClick={handleDownload}
+                className="inline-block bg-white text-indigo-700 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-100 transition-colors duration-200"
+              >
+                Download Image
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </main>
   );
 }
 
-// Updated ButtonGroup component
-function ButtonGroup({
-  title,
-  options,
-  selectedOption,
-  onOptionClick,
-}: {
-  title: string;
-  options: string[];
-  selectedOption: string;
-  onOptionClick: (option: string) => void;
-}) {
-  // Function to convert the title to title case with spaces
-  const formatTitle = (str: string) => {
-    return (
-      str
-        // Split the string at each uppercase letter
-        .split(/(?=[A-Z])/)
-        // Capitalize the first letter of each word
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // slice(1) returns the rest of the string after the first character
-        // Join the words with spaces
-        .join(" ")
-    );
-  };
-
-  return (
-    <div className="mt-4">
-      <p className="text-sm font-medium text-white mb-2">
-        {formatTitle(title)}:
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {options.map((option, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={() => onOptionClick(option)}
-            className={`px-3 py-1 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200 ${
-              selectedOption === option
-                ? "bg-white text-indigo-700 font-semibold border-2 border-indigo-300"
-                : "bg-indigo-600 text-white hover:bg-indigo-700"
-            }`}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
