@@ -5,6 +5,7 @@ import { imageGenerationOptions } from "../data";
 import OptionsSelector from "./components/options-selector";
 import { formatSelectedOptions } from "@/lib/utils";
 import * as Progress from "@radix-ui/react-progress";
+import {  useMobileScreen } from "../hooks/useMobileScreen";
 
 export default function ImageGeneration() {
   const [prompt, setPrompt] = useState("");
@@ -21,6 +22,7 @@ export default function ImageGeneration() {
   // State to track if the image has loaded
   const [imageLoaded, setImageLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const isMobile = useMobileScreen();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -145,7 +147,7 @@ export default function ImageGeneration() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="mt-1 block w-full border border-purple-300 rounded-md shadow-sm p-2 text-white bg-transparent/5 placeholder-indigo-100 focus:ring-2 focus:ring-indigo-400 focus:border-transparent "
-              rows={1}
+              rows={isMobile ? 3 : 1}
               placeholder="Describe the image you want to generate..."
               required
             />
