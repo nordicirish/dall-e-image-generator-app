@@ -7,7 +7,7 @@ export default function Page() {
         <h1 className="w-full text-center text-4xl font-bold my-4">
           Welcome to ImageGenie
         </h1>
-        <p className="w-full text-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
+        <p className="w-full bg-transparent/5 text-center border-b border-gray-300 pb-6 pt-8 rounded-md lg:rounded-xl lg:border lg:p-4 ">
           Generate stunning images with the power of AI.
         </p>
       </div>
