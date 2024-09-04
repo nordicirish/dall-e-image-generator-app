@@ -150,8 +150,11 @@ export default function ImageGeneration() {
             disabled={isLoading}
             className="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition duration-300 mb-4"
           >
+            {/* If the image url has been set but the image is still loading, display a loading message */}
             {isLoading ? (
               <span className="opacity-50">Generating...</span>
+            ) : imageUrl && !imageLoaded ? (
+              <span className="opacity-50">Loading...</span>
             ) : (
               "Generate Image"
             )}
