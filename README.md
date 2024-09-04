@@ -4,7 +4,7 @@
 
 ImageGenie is a web application that allows users to generate beautiful images using advanced AI models. This README provides an overview of the app's features and functionality.
 
-**Check out the live app here:** https://dall-e-image-generator-app.vercel.app/
+**Check out the live app here:** https://dall-e-image-generator-app.vercel.app/image-generation
 
 ## Features
 
