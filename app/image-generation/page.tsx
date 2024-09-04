@@ -33,6 +33,8 @@ export default function ImageGeneration() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    setImageLoaded(false); // Reset imageLoaded state
+    setImageUrl(""); // Clear the previous image URL
 
     // Store the current selectedOptions before clearing them
     // Used to display the last used options in the image generation text
@@ -168,8 +170,6 @@ export default function ImageGeneration() {
                 width={500}
                 height={500}
                 layout="responsive"
-                // Set imageLoaded to true when the image is loaded
-                // used to display the image generation text after the image has loaded
                 onLoadingComplete={() => setImageLoaded(true)}
               />
               {imageLoaded && (
