@@ -58,6 +58,13 @@ export default function ImageGeneration() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    
+    // Check if the prompt is empty
+    if (!prompt.trim()) {
+      setError("Please enter a prompt before generating an image.");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
     setImageLoaded(false); // Reset imageLoaded state
@@ -69,7 +76,7 @@ export default function ImageGeneration() {
 
     // Construct the full prompt by combining the user's input with selected options
     // Filter out empty options, format each as "value  + category", and join with commas
-    const fullPrompt = `${prompt} ${Object.entries(selectedOptions)
+    const fullPrompt = `${prompt.trim()} ${Object.entries(selectedOptions)
       .filter(([_, value]) => value)
       .map(([category, value]) => `${value} ${category}`)
       .join(", ")}`.trim();
@@ -141,6 +148,7 @@ export default function ImageGeneration() {
               className="mt-1 block w-full border border-purple-300 rounded-md shadow-sm p-2 text-white bg-transparent/5 placeholder-indigo-100 focus:ring-2 focus:ring-indigo-400 focus:border-transparent "
               rows={1}
               placeholder="Describe the image you want to generate..."
+              required
             />
           </div>
         </form>
