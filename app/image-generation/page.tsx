@@ -17,6 +17,9 @@ export default function ImageGeneration() {
     Record<string, string>
   >({});
 
+
+  // If the clicked option is already selected, deselect it.
+  // If a different option is clicked, it selects the new option for that category.
   const handleOptionClick = (category: string, option: string) => {
     setSelectedOptions((prev) => ({
       ...prev,
@@ -29,6 +32,8 @@ export default function ImageGeneration() {
     setIsLoading(true);
     setError("");
 
+    // Construct the full prompt by combining the user's input with selected options
+    // Filter out empty options, format each as "value  + category", and join with commas
     const fullPrompt = `${prompt} ${Object.entries(selectedOptions)
       .filter(([_, value]) => value)
       .map(([category, value]) => `${value} ${category}`)
@@ -58,7 +63,6 @@ export default function ImageGeneration() {
     }
   }
 
-  const router = useRouter();
 
   const handleDownload = async () => {
     if (imageUrl) {
@@ -84,79 +88,69 @@ export default function ImageGeneration() {
   return (
     <main className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-12 flex flex-col items-center justify-start">
       <h1 className="text-4xl font-bold mb-8 text-center">Image Generation</h1>
-      <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
-        {/* Left side - Prompt input */}
-        <div className="w-full lg:w-1/2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="prompt"
-                className="block text-sm font-medium text-white"
-              >
-                Enter your prompt
-              </label>
-              <textarea
-                id="prompt"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                className="mt-1 block w-full border border-purple-300 rounded-md shadow-sm p-2 text-white bg-indigo-700 bg-opacity-50 placeholder-indigo-200 focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-                rows={4}
-                placeholder="Describe the image you want to generate..."
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="model"
-                className="block text-sm font-medium text-white"
-              >
-                Select Model
-              </label>
-              <select
-                id="model"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                className="mt-1 block w-full border border-purple-300 rounded-md shadow-sm p-2 text-white bg-indigo-700 bg-opacity-50 focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-              >
-                <option value="dall-e-2">DALL-E 2</option>
-                <option value="dall-e-3">DALL-E 3</option>
-              </select>
-            </div>
-            <OptionsSelector
-              options={imageGenerationOptions}
-              selectedOptions={selectedOptions}
-              onOptionClick={handleOptionClick}
-            />
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition duration-300"
-            >
-              {isLoading ? (
-                <span className="opacity-50">Generating...</span>
-              ) : (
-                "Generate Image"
-              )}
-            </button>
-          </form>
-          {error && <p className="text-red-300 mt-4">{error}</p>}
-        </div>
-
-        {/* Right side - Generated image */}
-        <div className="w-full lg:w-1/2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6">
-          {isLoading ? (
-            <>
+      <div className="w-full max-w-6xl mx-auto mb-8 rounded-lg shadow-lg p-6 bg-transparent/5">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label>
               <h2 className="text-2xl font-bold mb-4 text-white">
-                Image is generating...
+                Enter your prompt
               </h2>
-              <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-white"></div>
-              </div>
-            </>
+            </label>
+            <textarea
+              id="prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="mt-1 block w-full border border-purple-300 rounded-md shadow-sm p-2 text-white bg-transparent/5 placeholder-indigo-100 focus:ring-2 focus:ring-indigo-400 focus:border-transparent "
+              rows={1}
+              placeholder="Describe the image you want to generate..."
+            />
+          </div>
+        </form>
+        {error && <p className="text-red-300 mt-4">{error}</p>}
+      </div>
+      <div className="flex flex-col lg:flex-row gap-8 w-full max-w-6xl mx-auto">
+        {/* Left side - Generated image */}
+
+        <div className="w-full lg:w-1/2 bg-transparent/5 rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-bold mb-4 text-white">
+            AI Image Generation
+          </h2>
+          <div className="mb-4">
+            <label
+              htmlFor="model"
+              className="block text-sm font-medium text-white mb-2"
+            >
+              Select Model
+            </label>
+            <select
+              id="model"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="block w-full border border-purple-300 rounded-md shadow-sm p-2 text-white bg-indigo-700 bg-opacity-50 focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+            >
+              <option value="dall-e-2">DALL-E 2</option>
+              <option value="dall-e-3">DALL-E 3</option>
+            </select>
+          </div>
+          <button
+            onClick={(e) =>
+              handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
+            }
+            disabled={isLoading}
+            className="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition duration-300 mb-4"
+          >
+            {isLoading ? (
+              <span className="opacity-50">Generating...</span>
+            ) : (
+              "Generate Image"
+            )}
+          </button>
+          {isLoading ? (
+            <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-white"></div>
+            </div>
           ) : imageUrl ? (
             <>
-              <h2 className="text-2xl font-bold mb-4 text-white">
-                Generated Image
-              </h2>
               <Image
                 src={imageUrl}
                 alt={`Generated image of a ${prompt}. ${formatSelectedOptions(
@@ -173,14 +167,9 @@ export default function ImageGeneration() {
               </p>
             </>
           ) : (
-            <>
-              <h2 className="text-2xl font-bold mb-4 text-white">
-                Generated Image
-              </h2>
-              <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center text-purple-200">
-                No image generated yet
-              </div>
-            </>
+            <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center text-purple-200">
+              No image generated yet
+            </div>
           )}
           {imageUrl && (
             <div className="mt-4">
@@ -193,8 +182,17 @@ export default function ImageGeneration() {
             </div>
           )}
         </div>
+
+        {/* Right side - Options */}
+        <div className="w-full lg:w-1/2 bg-transparent/5  rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-bold mb-4 text-white">More Options</h2>
+          <OptionsSelector
+            options={imageGenerationOptions}
+            selectedOptions={selectedOptions}
+            onOptionClick={handleOptionClick}
+          />
+        </div>
       </div>
     </main>
   );
 }
-
