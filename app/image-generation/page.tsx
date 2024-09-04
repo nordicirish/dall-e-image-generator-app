@@ -58,10 +58,9 @@ export default function ImageGeneration() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    
-    // Check if the prompt is empty
+        // Check if the prompt is empty to prevent the user from generating an image with just the options and no prompt text
     if (!prompt.trim()) {
-      setError("Please enter a prompt before generating an image.");
+      setError("Please enter a prompt before generating an image!");
       return;
     }
 
@@ -152,7 +151,7 @@ export default function ImageGeneration() {
             />
           </div>
         </form>
-        {error && <p className="text-white w-full min-w-52 max-w-lg text-center px-2 py-1 bg-red-500 border border-red-700 mt-4 rounded">{error}</p>}
+        {error && <p className="text-white w-full min-w-52 max-w-lg text-center px-2 py-1 bg-red-600 border border-red-800 mt-4 rounded">{error}</p>}
       </div>
       <div className="flex flex-col lg:flex-row gap-8 w-full max-w-6xl mx-auto">
         {/* Left side - Generated image */}
