@@ -19,7 +19,7 @@ const generateImageSchema = z.object({
     }),
 });
 
-export const runtime = "edge"; // Specify that this function should run on the Edge runtime
+export const runtime = "edge"; // Specify that this function should run on the Edge runtime to prevent timeouts
 
 export async function POST(req: NextRequest) {
   // Specify the type for 'req'

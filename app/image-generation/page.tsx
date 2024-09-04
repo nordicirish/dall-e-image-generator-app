@@ -11,8 +11,14 @@ export default function ImageGeneration() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [model, setModel] = useState("dall-e-2");
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
-  const [lastUsedOptions, setLastUsedOptions] = useState<Record<string, string>>({});
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<string, string>
+  >({});
+  const [lastUsedOptions, setLastUsedOptions] = useState<
+    Record<string, string>
+  >({});
+  // State to track if the image has loaded and
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // If the clicked option is already selected, deselect it.
   // If a different option is clicked, it selects the new option for that category.
@@ -29,7 +35,7 @@ export default function ImageGeneration() {
     setError("");
 
     // Store the current selectedOptions before clearing them
-    // Used to display the last used options in the image generation text 
+    // Used to display the last used options in the image generation text
     setLastUsedOptions({ ...selectedOptions });
 
     // Construct the full prompt by combining the user's input with selected options
@@ -65,13 +71,14 @@ export default function ImageGeneration() {
     }
   }
 
-
   const handleDownload = async () => {
     if (imageUrl) {
       try {
         // First, send the image URL to be stored server-side
         const encodedUrl = encodeURIComponent(imageUrl);
-        const storeResponse = await fetch(`/api/download-image?url=${encodedUrl}`);
+        const storeResponse = await fetch(
+          `/api/download-image?url=${encodedUrl}`
+        );
         const { id } = await storeResponse.json();
 
         if (id) {
@@ -79,10 +86,10 @@ export default function ImageGeneration() {
           const downloadUrl = `/api/download-image?id=${id}`;
           window.location.href = downloadUrl;
         } else {
-          console.error('Failed to store image');
+          console.error("Failed to store image");
         }
       } catch (error) {
-        console.error('Error initiating download:', error);
+        console.error("Error initiating download:", error);
       }
     }
   };
@@ -155,16 +162,23 @@ export default function ImageGeneration() {
             <>
               <Image
                 src={imageUrl}
-                alt={`Generated image of a ${prompt}. ${formatSelectedOptions(lastUsedOptions)}`}
+                alt={`Generated image of a ${prompt}. ${formatSelectedOptions(
+                  lastUsedOptions
+                )}`}
                 width={500}
                 height={500}
                 layout="responsive"
+                // Set imageLoaded to true when the image is loaded
+                // used to display the image generation text after the image has loaded
+                onLoadingComplete={() => setImageLoaded(true)}
               />
-              <p className="text-sm text-white mt-2 capitalize">
-                Generated image: {prompt}
-                <br />
-                {formatSelectedOptions(lastUsedOptions)}
-              </p>
+              {imageLoaded && (
+                <p className="text-sm text-white mt-2 capitalize">
+                  Generated image: {prompt}
+                  <br />
+                  {formatSelectedOptions(lastUsedOptions)}
+                </p>
+              )}
             </>
           ) : (
             <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center text-purple-200">
