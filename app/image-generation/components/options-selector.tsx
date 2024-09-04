@@ -1,5 +1,4 @@
 import React from "react";
-import ButtonGroup from "./button-group";
 import { formatTitle } from "@/utils";
 
 interface OptionsSelectorProps {
@@ -17,7 +16,7 @@ const OptionsSelector: React.FC<OptionsSelectorProps> = ({
 }) => {
   return (
     <div className="space-y-6">
-      {Object.entries(options).map(([category, options]) => (
+      {Object.entries(options).map(([category, categoryOptions]) => (
         <fieldset
           key={category}
           className="border border-indigo-300 rounded-md pt-2 pb-4 flex flex-col items-center"
@@ -26,12 +25,23 @@ const OptionsSelector: React.FC<OptionsSelectorProps> = ({
             {formatTitle(category)}
           </legend>
 
-          <ButtonGroup
-            options={options}
-            selectedOption={selectedOptions[category] || ""}
-            onOptionClick={(option: string) => onOptionClick(category, option)}
-            isDisabled={isLoading} // disable the button group when the image is loading to stop the user from clicking on the buttons
-          />
+          <div className="flex w-full justify-center flex-wrap gap-2 px-2">
+            {categoryOptions.map((option, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => onOptionClick(category, option)}
+                disabled={isLoading}
+                className={`px-3 py-1 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200 ${
+                  selectedOptions[category] === option
+                    ? "bg-white text-indigo-700 font-semibold border-2 border-indigo-300"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700 border-2 border-transparent"
+                } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </fieldset>
       ))}
     </div>
