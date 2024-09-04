@@ -1,5 +1,7 @@
 # ImageGenie: AI-Powered Image Generation
 
+![ImageGenie App Screenshot](./public/imagegenie-screenshot.jpg)
+
 ImageGenie is a web application that allows users to generate beautiful images using advanced AI models. This README provides an overview of the app's features and functionality.
 
 **Check out the live app here:** https://dall-e-image-generator-app.vercel.app/
@@ -13,6 +15,7 @@ ImageGenie is a web application that allows users to generate beautiful images u
 3. **Model Selection**: Choose between DALL-E 2 and DALL-E 3 models for image generation.
 
 4. **Image Customization Options**: Fine-tune your generated images with various options:
+
    - Style (e.g., Photorealistic, Cartoon, Abstract)
    - Mood (e.g., Happy, Sad, Mysterious)
    - Color Palette (e.g., Vibrant, Pastel, Monochrome)
@@ -36,4 +39,4 @@ ImageGenie is a web application that allows users to generate beautiful images u
 
 - Next.js (React) for the frontend, backend and API routes
 - Tailwind CSS for styling
-- OpenAI's API for image generation 
+- OpenAI's API for image generation
