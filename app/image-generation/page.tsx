@@ -4,8 +4,6 @@ import Image from "next/image";
 import { imageGenerationOptions } from "../data";
 import OptionsSelector from "./components/options-selector";
 import { formatSelectedOptions } from "@/utils";
-import Link from "next/link";
-import { useRouter } from 'next/navigation';
 
 export default function ImageGeneration() {
   const [prompt, setPrompt] = useState("");
@@ -13,10 +11,8 @@ export default function ImageGeneration() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [model, setModel] = useState("dall-e-2");
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, string>
-  >({});
-
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [lastUsedOptions, setLastUsedOptions] = useState<Record<string, string>>({});
 
   // If the clicked option is already selected, deselect it.
   // If a different option is clicked, it selects the new option for that category.
@@ -31,6 +27,10 @@ export default function ImageGeneration() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    // Store the current selectedOptions before clearing them
+    // Used to display the last used options in the image generation text 
+    setLastUsedOptions({ ...selectedOptions });
 
     // Construct the full prompt by combining the user's input with selected options
     // Filter out empty options, format each as "value  + category", and join with commas
@@ -60,6 +60,8 @@ export default function ImageGeneration() {
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
+      // Clear the selected options after generating the image
+      setSelectedOptions({});
     }
   }
 
@@ -153,9 +155,7 @@ export default function ImageGeneration() {
             <>
               <Image
                 src={imageUrl}
-                alt={`Generated image of a ${prompt}. ${formatSelectedOptions(
-                  selectedOptions
-                )}`}
+                alt={`Generated image of a ${prompt}. ${formatSelectedOptions(lastUsedOptions)}`}
                 width={500}
                 height={500}
                 layout="responsive"
@@ -163,7 +163,7 @@ export default function ImageGeneration() {
               <p className="text-sm text-white mt-2 capitalize">
                 Generated image: {prompt}
                 <br />
-                {formatSelectedOptions(selectedOptions)}
+                {formatSelectedOptions(lastUsedOptions)}
               </p>
             </>
           ) : (
@@ -190,6 +190,7 @@ export default function ImageGeneration() {
             options={imageGenerationOptions}
             selectedOptions={selectedOptions}
             onOptionClick={handleOptionClick}
+            isLoading={isLoading} // Add this line
           />
         </div>
       </div>

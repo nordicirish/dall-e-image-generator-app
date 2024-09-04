@@ -6,12 +6,14 @@ interface OptionsSelectorProps {
   options: Record<string, string[]>;
   selectedOptions: Record<string, string>;
   onOptionClick: (category: string, option: string) => void;
+  isLoading: boolean;
 }
 
 const OptionsSelector: React.FC<OptionsSelectorProps> = ({
   options,
   selectedOptions,
   onOptionClick,
+  isLoading,
 }) => {
   return (
     <div className="space-y-6">
@@ -28,6 +30,7 @@ const OptionsSelector: React.FC<OptionsSelectorProps> = ({
             options={options}
             selectedOption={selectedOptions[category] || ""}
             onOptionClick={(option: string) => onOptionClick(category, option)}
+            isDisabled={isLoading} // disable the button group when the image is loading to stop the user from clicking on the buttons
           />
         </fieldset>
       ))}
