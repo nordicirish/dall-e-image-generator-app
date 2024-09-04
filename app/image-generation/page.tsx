@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { imageGenerationOptions } from "../data";
 import OptionsSelector from "./components/options-selector";
-import { formatSelectedOptions } from "@/utils";
+import { formatSelectedOptions } from "@/lib/utils";
+import * as Progress from "@radix-ui/react-progress";
 
 export default function ImageGeneration() {
   const [prompt, setPrompt] = useState("");
@@ -17,8 +18,34 @@ export default function ImageGeneration() {
   const [lastUsedOptions, setLastUsedOptions] = useState<
     Record<string, string>
   >({});
-  // State to track if the image has loaded and
+  // State to track if the image has loaded
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoading) {
+      setProgress(0);
+      timer = setInterval(() => {
+        setProgress((prevProgress) => {
+          if (prevProgress >= 80) {
+            clearInterval(timer);
+            return 80;
+          }
+          return prevProgress + 10;
+        });
+      }, 500);
+    } else if (imageUrl && !imageLoaded) {
+      setProgress(90);
+    } else if (imageLoaded) {
+      setProgress(100);
+      timer = setTimeout(() => setProgress(0), 500);
+    }
+    return () => {
+      clearInterval(timer);
+      clearTimeout(timer);
+    };
+  }, [isLoading, imageUrl, imageLoaded]);
 
   // If the clicked option is already selected, deselect it.
   // If a different option is clicked, it selects the new option for that category.
@@ -117,7 +144,7 @@ export default function ImageGeneration() {
             />
           </div>
         </form>
-        {error && <p className="text-red-300 mt-4">{error}</p>}
+        {error && <p className="text-white w-full min-w-52 max-w-lg text-center px-2 py-1 bg-red-500 border border-red-700 mt-4 rounded">{error}</p>}
       </div>
       <div className="flex flex-col lg:flex-row gap-8 w-full max-w-6xl mx-auto">
         {/* Left side - Generated image */}
@@ -143,22 +170,42 @@ export default function ImageGeneration() {
               <option value="dall-e-3">DALL-E 3</option>
             </select>
           </div>
-          <button
-            onClick={(e) =>
-              handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
-            }
-            disabled={isLoading}
-            className="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition duration-300 mb-4"
-          >
-            {/* If the image url has been set but the image is still loading, display a loading message */}
-            {isLoading ? (
-              <span className="opacity-50">Generating...</span>
-            ) : imageUrl && !imageLoaded ? (
-              <span className="opacity-50">Loading...</span>
-            ) : (
-              "Generate Image"
-            )}
-          </button>
+          {isLoading || (imageUrl && !imageLoaded) ? (
+            <div className="w-full mb-4 relative">
+              <Progress.Root
+                className="relative overflow-hidden bg-blue-500 rounded-full w-full h-8"
+                value={progress}
+              >
+                <Progress.Indicator
+                  className={`w-full h-full ${
+                    imageUrl ? "bg-green-500" : "bg-amber-500"
+                  } transition-transform duration-[660ms] ease-[cubic-bezier(0.65, 0, 0.35, 1)]`}
+                  style={{ transform: `translateX(-${100 - progress}%)` }}
+                />
+              </Progress.Root>
+              <div className="absolute inset-0 flex items-center justify-center">
+                {isLoading ? (
+                  <p className="text-white font-semibold">
+                    Generating... {progress}%
+                  </p>
+                ) : imageUrl && !imageLoaded ? (
+                  <p className="text-white font-semibold">
+                    Loading image... {progress}%
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={(e) =>
+                handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
+              }
+              disabled={isLoading}
+              className="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition duration-300 mb-4"
+            >
+              Generate Image
+            </button>
+          )}
           {isLoading ? (
             <div className="border-2 border-dashed border-purple-300 rounded-lg h-64 flex items-center justify-center">
               <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-white"></div>

@@ -10,8 +10,8 @@ const openai = new OpenAI({
 const generateImageSchema = z.object({
   prompt: z
     .string()
-    .min(1, "Prompt is required")
-    .max(1000, "Prompt is too long"),
+    .min(1, "Prompt is required!")
+    .max(1000, "Prompt is too long! (1000 characters max)"),
   model: z
     .enum(["dall-e-2", "dall-e-3"])
     .refine((value) => value !== undefined, {

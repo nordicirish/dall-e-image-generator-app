@@ -1,5 +1,5 @@
 import React from "react";
-import { formatTitle } from "@/utils";
+import { formatTitle } from "@/lib/utils";
 
 interface OptionsSelectorProps {
   options: Record<string, string[]>;
