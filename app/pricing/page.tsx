@@ -21,7 +21,7 @@ export default function Pricing() {
             checked={isAnnual}
             onChange={togglePricing}
           />
-          <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:bg-blue-600">
+          <div className="w-11 h-6 bg-gray-700 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-800 peer-checked:bg-blue-600">
             <div className={`transform transition duration-300 ease-in-out absolute top-0.5 bg-white border-gray-300 border rounded-full h-5 w-5 ${isAnnual ? 'right-1' : 'left-1'}`}></div>
           </div>
         </label>
