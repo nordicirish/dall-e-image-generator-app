@@ -188,8 +188,10 @@ export default function ImageGeneration() {
                 <Progress.Indicator
                   className={`w-full h-full ${
                     imageUrl ? "bg-green-500" : "bg-amber-500"
-                  } transition-transform duration-700 ease-[cubic-bezier(0.65,0,0.35,1)]`}
-                  style={{ transform: `translateX(-${100 - progress}%)` }}
+                  } transition-transform duration-700 ease-in-out`}
+                  style={{ 
+                    transform: `translateX(-${100 - progress}%)`
+                  }}
                 />
               </Progress.Root>
               <div className="absolute inset-0 flex items-center justify-center">

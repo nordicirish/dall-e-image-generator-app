@@ -5,7 +5,7 @@ const imageStore = new Map<string, { buffer: Buffer; timestamp: number }>();
 
 // Cleanup configuration
 const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
-const IMAGE_EXPIRY = 24 * 12 * 60 * 1000; // 24hours
+const IMAGE_EXPIRY = 24 * 60 * 60 * 1000; // 24hours
 
 // Cleanup function
 function cleanupImages() {
