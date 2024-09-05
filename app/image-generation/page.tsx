@@ -6,6 +6,7 @@ import OptionsSelector from "./components/options-selector";
 import { formatSelectedOptions } from "@/lib/utils";
 import * as Progress from "@radix-ui/react-progress";
 import {  useMobileScreen } from "../hooks/useMobileScreen";
+import { toast } from 'react-hot-toast'; // Add this import if not already present
 
 export default function ImageGeneration() {
   const [prompt, setPrompt] = useState("");
@@ -60,9 +61,8 @@ export default function ImageGeneration() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-        // Check if the prompt is empty to prevent the user from generating an image with just the options and no prompt text
     if (!prompt.trim()) {
-      setError("Please enter a prompt before generating an image!");
+      toast.error("Please enter a prompt before generating an image!");
       return;
     }
 
@@ -95,12 +95,15 @@ export default function ImageGeneration() {
 
       if (result.success) {
         setImageUrl(result.imageUrl || "");
+        // Removed the toast.success message here
       } else {
         setError(result.error || "Failed to generate image");
+        toast.error(result.error || "Failed to generate image");
       }
     } catch (err) {
       console.error(err);
       setError("An unexpected error occurred");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
       // Clear the selected options after generating the image
@@ -111,23 +114,31 @@ export default function ImageGeneration() {
   const handleDownload = async () => {
     if (imageUrl) {
       try {
-        // First, send the image URL to be stored server-side
         const encodedUrl = encodeURIComponent(imageUrl);
-        const storeResponse = await fetch(
-          `/api/download-image?url=${encodedUrl}`
-        );
-        const { id } = await storeResponse.json();
-
-        if (id) {
-          // Now download the image using the returned ID
-          const downloadUrl = `/api/download-image?id=${id}`;
-          window.location.href = downloadUrl;
-        } else {
-          console.error("Failed to store image");
-        }
+        const downloadUrl = `/api/download-image?url=${encodedUrl}`;
+        
+        // Show success toast immediately if downloadUrl is valid
+        toast.success('Download started!');
+        
+        // Create a temporary link element and trigger the download
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `generated-image-${Date.now()}.png`;
+        document.body.appendChild(link);
+        
+        // Delay the click to ensure the toast is visible
+        setTimeout(() => {
+          link.click();
+          document.body.removeChild(link);
+          toast.success('Image saved to your downloads folder.');
+        }, 1000); // Delay of 1 second
+        
       } catch (error) {
-        console.error("Error initiating download:", error);
+        console.error("Error downloading image:", error);
+        toast.error(`Failed to download image: ${(error as Error).message}`);
       }
+    } else {
+      toast.error('No image available to download.');
     }
   };
 
