@@ -22,7 +22,10 @@ export default function Nav() {
   return (
     <nav className="border-b bg-slate-700">
       <div className="container flex items-center justify-between md:justify-center md:gap-2 px-4 py-4 mx-auto">
-        <Link href="/" className="text-2xl font-bold text-white md:mr-6">
+        <Link
+          href="/"
+          className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-blue-500 md:mr-6"
+        >
           ImageGenie
         </Link>
         <div className="hidden md:flex space-x-4">
