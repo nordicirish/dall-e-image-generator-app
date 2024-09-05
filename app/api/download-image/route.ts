@@ -1,83 +1,49 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-// In-memory storage for images
-const imageStore = new Map<string, { buffer: Buffer; timestamp: number }>();
-
-// Cleanup configuration
-const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
-const IMAGE_EXPIRY = 24 * 60 * 60 * 1000; // 24hours
-
-// Cleanup function
-function cleanupImages() {
-  const now = Date.now();
-  imageStore.forEach(({ timestamp }, id) => {
-    if (now - timestamp > IMAGE_EXPIRY) {
-      imageStore.delete(id);
-    }
-  });
-}
-
-// Start the cleanup interval
-setInterval(cleanupImages, CLEANUP_INTERVAL);
+/**
+ * Image Download Redirect API Route
+ * 
+ * This route handles redirecting the user to download an image directly from the OpenAI URL:
+ * - Accepts an image URL as a query parameter
+ * - Validates the URL 
+ * - Redirects the user to the image URL for direct download
+ * - No server-side storage required
+ * - Error handling for invalid requests
+ */
 
 export async function GET(req: NextRequest) {
   const imageUrl = req.nextUrl.searchParams.get("url");
-  const imageId = req.nextUrl.searchParams.get("id");
 
-  if (!imageUrl && !imageId) {
-    return NextResponse.json(
-      { error: "Image URL or ID is required" },
-      { status: 400 }
-    );
+  if (!imageUrl) {
+    return new Response(JSON.stringify({ error: "Image URL is required" }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   try {
-    let imageBuffer: Buffer;
-    let contentType: string | null = "image/png";
+    const response = await fetch(imageUrl);
 
-    if (imageId && imageStore.has(imageId)) {
-      // Retrieve image from memory
-      const storedImage = imageStore.get(imageId)!;
-      imageBuffer = storedImage.buffer;
-      // Update timestamp to keep the image "fresh"
-      storedImage.timestamp = Date.now();
-    } else if (imageUrl) {
-      // Fetch and store image
-      const response = await fetch(imageUrl);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch image");
-      }
-
-      contentType = response.headers.get("content-type");
-      const arrayBuffer = await response.arrayBuffer();
-      imageBuffer = Buffer.from(arrayBuffer);
-
-      // Generate a unique ID and store the image
-      const newImageId = Date.now().toString();
-      imageStore.set(newImageId, {
-        buffer: imageBuffer,
-        timestamp: Date.now(),
-      });
-
-      // Return the ID to the client
-      return NextResponse.json({ id: newImageId });
-    } else {
-      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.statusText}`);
     }
 
-    // Serve the image
-    return new NextResponse(imageBuffer, {
+    const contentType = response.headers.get('content-type');
+    const arrayBuffer = await response.arrayBuffer();
+    
+    return new Response(arrayBuffer, {
       headers: {
-        "Content-Type": contentType || "image/png",
-        "Content-Disposition": `attachment; filename="generated-image-${Date.now()}.png"`,
+        'Content-Type': contentType || 'image/png',
+        'Content-Disposition': `attachment; filename="generated-image-${Date.now()}.png"`,
+        'Cache-Control': 'no-cache',
       },
     });
   } catch (error) {
-    console.error("Error processing image:", error);
-    return NextResponse.json(
-      { error: "Failed to process image" },
-      { status: 500 }
-    );
+    console.error("Error processing image URL:", error);
+    const errorMessage = (error instanceof Error) ? error.message : "Failed to process image";
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
