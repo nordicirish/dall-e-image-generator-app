@@ -1,6 +1,6 @@
 # ImageGenie: AI-Powered Image Generation
 
-![ImageGenie App Screenshot](./public/imagegenie-screenshot.jpg)
+![ImageGenie App Screenshot](./public/imageGenieImg.jpeg)
 
 ImageGenie is a web application that allows users to generate beautiful images using advanced AI models. This README provides an overview of the app's features and functionality.
 
