@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
 const routes = [
   { title: "Home", href: "/" },
@@ -21,8 +21,8 @@ export default function Nav() {
   const pathname = usePathname();
   return (
     <nav className="border-b bg-slate-700">
-      <div className="container flex items-center justify-between px-4 py-4 mx-auto">
-        <Link href="/" className="text-2xl font-bold text-white">
+      <div className="container flex items-center justify-between md:justify-center md:gap-2 px-4 py-4 mx-auto">
+        <Link href="/" className="text-2xl font-bold text-white md:mr-6">
           ImageGenie
         </Link>
         <div className="hidden md:flex space-x-4">
@@ -56,6 +56,16 @@ export default function Nav() {
           </SheetTrigger>
           <SheetContent side="right">
             <div className="flex flex-col space-y-4 py-4 bg-gray-500/80 text-white rounded-xl">
+              <SheetClose asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-8 top-8 text-white hover:text-white focus:text-white active:text-white"
+                >
+                  <X className="h-6 w-6" />
+                  <span className="sr-only">Close menu</span>
+                </Button>
+              </SheetClose>
               {routes.map((route) => (
                 <Button
                   className={cn(
